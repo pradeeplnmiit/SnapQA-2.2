@@ -7,7 +7,7 @@ var config=require('../config');
 
 //Adding a new Deal by the admin
 exports.addNewDeal = function (req,res) {
-
+//Hello Random Comment
     var deal = new Deal();
     deal.adminName = req.body.adminName;
     deal.dealType = req.body.type;
