@@ -83,15 +83,15 @@ exports.acceptedDeal = function (req,res) {        //Required : Token and Deal i
                         })
                     }
                         else{
-
-                                var bookedStatusCount = deal.bookedStatus.size;
+                                console.log(deal.isActive);
+                                deal.isActive = false;
+                                console.log(deal.isActive);
                                 var randId = new mongoose.Types.ObjectId();
-                                console.log(bookedStatusCount);
                                 bookedStatusdata = {
                                     "bookingId":user_id,
                                     "status":"booked"
                                 }
-                                Deal.update({"_id":deal._id},{ "$push": { "bookedStatus": bookedStatusdata }},function(err) {
+                                Deal.update({"_id":deal._id},{ "$push": { "bookedStatus": bookedStatusdata },"$set":{"isActive":false}},function(err) {
                                     if (err) {
                                         res.json({
                                             message: 'Unsuccessful',
@@ -138,7 +138,7 @@ exports.liveDeals = function (req,res) {
                     user_id = decoded._doc._id;
                 }
                 console.log(user_id);
-                Deal.find({dealType:"Live Session",'bookedStatus.bookingId': user_id},{dealType:1,adminName:1},function (err,deal) {
+                Deal.find({dealType:"Live Session",'bookedStatus.bookingId': user_id},function (err,deal) {
                     if(err){
                         res.send({
                             status: false,
