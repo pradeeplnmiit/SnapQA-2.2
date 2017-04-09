@@ -273,3 +273,43 @@ exports.editProfile = function (req,res) {
     }
 
 }
+
+exports.editPaymentDetails = function (req,res) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.param('Token');
+    if(token){
+        jwt.verify(token,config.secretKey,function (err,decoded) {
+            if(err){
+                return res.json({success:false, message:'Failed to authenticate the Token'});
+            }else{
+                var user_id;
+                if(decoded._id){
+                    console.log("Inside decoded._id if block")
+                    user_id = decoded._id;
+                }else{
+                    console.log("Inside else block");
+                    user_id = decoded._doc._id;
+                }
+                console.log(user_id);
+                User.findOneAndUpdate({_id :user_id},{"$set":{"bankDetails.accNo":req.body.accountNumber,"bankDetails.iFSC":req.body.ifscCode,"bankDetails.panNumber":req.body.panNumber}},function (err,user) {
+                    if(err)
+                        res.json({
+                            message:'Unsuccessful',
+                            error : err
+                        });
+                    else
+                        res.json({
+                            message:'Successful !! Bank Details Added !!'
+                        });
+                })
+
+            }
+        })
+    }
+    else{
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+    }
+
+}
