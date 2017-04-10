@@ -19,4 +19,5 @@ router.route('/viewDeals').get(admindealsController.viewDeal);
 //Edit the deal
 router.route('/editDeal').post(admindealsController.editDeal);
 router.route('/overAll').get(admindealsController.overAllList);
+router.route('/usersList').get(admindealsController.usersList);
 module.exports = router;

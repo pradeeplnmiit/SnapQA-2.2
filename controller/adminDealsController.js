@@ -2,6 +2,7 @@
  * Created by rathi on 18/03/17.
  */
 var Deal = require('../models/deals');
+var User = require('../models/user');
 var jwt = require('../node_modules/jsonwebtoken');
 var config=require('../config');
 
@@ -213,4 +214,20 @@ exports.overAllList = function (req,res) {
                 examType : examType,
                 statusMessage : statusMessage
     });
+}
+
+exports.usersList = function (req,res) {
+    User.find({},{Name:1,Specialization:1,Email:1,Phone:1},function (err,users) {
+        if(err){
+            res.status(500);
+            res.json({
+                message : "Unsuccessful",
+                error : err
+            });
+        }else{
+            res.json({
+                responses : users
+            });
+        }
+    })
 }
