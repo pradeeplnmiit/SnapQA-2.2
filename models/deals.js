@@ -13,7 +13,7 @@ var DealSchema = mongoose.Schema({
     timeTo : {type: Date},
     duration : Number,
     clientName:{type: String},
-    // subjectName: String,
+    subjectName: String,
     bookName:String,
     courseNumber : String,
     examType : String,

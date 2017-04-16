@@ -19,7 +19,7 @@ exports.addNewDeal = function (req,res) {
     deal.timeTo = new Date(req.body.timeTo);
     deal.duration = req.body.duration;
     deal.clientName = req.body.clientName;
-    // deal.subjectName = req.body.subjectName;
+    deal.subjectName = req.body.subjectName;
     deal.bookName = req.body.bookName;
     deal.amount = req.body.amount;
     if(deal.dealType=="Home Work"){
