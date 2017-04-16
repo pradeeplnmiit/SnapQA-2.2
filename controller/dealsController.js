@@ -138,14 +138,16 @@ exports.liveDeals = function (req,res) {
                     user_id = decoded._doc._id;
                 }
                 console.log(user_id);
-                Deal.find({dealType:"Live Session",'bookedStatus.bookingId': user_id},function (err,deal) {
+                Deal.find({dealType:"Reporting Live",'bookedStatus.bookingId': user_id},function (err,deal) {
                     if(err){
                         res.send({
                             status: false,
                             message: 'Couldn\'t find the Deal'
                         })
                     }else{
-                        res.send(deal);
+                        res.json({
+                            responses : deal
+                        })
                     }
                 })
             }
@@ -185,7 +187,9 @@ exports.homeworkDeals = function (req,res) {
                             message: 'Couldn\'t find the Deal'
                         })
                     }else{
-                        res.send(deal);
+                        res.json({
+                            responses : deal
+                        })
                     }
                 })
             }
@@ -198,3 +202,83 @@ exports.homeworkDeals = function (req,res) {
     }
 
 }
+
+
+
+exports.viewDealUpComingTesting = function (req, res) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.param('Token');
+    if(token){
+        jwt.verify(token, config.secretKey, function(err, decoded) {
+            if (err) {
+                return res.json({ success: false, message: 'Failed to authenticate token.' , error:err});
+            } else {
+                var userId;
+                if(decoded._id){
+                    console.log("Inside decoded._id if block")
+                    userId = decoded._id;
+                }else{
+                    console.log("Inside else block");
+                    userId = decoded._doc._id;
+                }
+                console.log(userId);
+                User.findOne({_id : userId},{Specialization:1},function (err,user) {
+                    if(err){
+                        res.send({
+                            success : false,
+                            message : 'Couldn\'t find the User'
+                        })
+                    }else{
+                        console.log(user.Specialization);
+                        Deal.find({'bookedStatus.bookingId': userId},{dealDate:1,endDate:1},function (err,deals) {
+                            if(err){
+                                res.json({
+                                    message : 'User\'s Booked Deals couldn\'t be found',
+                                    error : err
+                                })
+                            }else {
+                                var userBookedDealsStartTimeArray = [];
+
+                                 for (var i = 0; i < deals.length; i++) {                            //For Every Booked Deal by the user
+                                        var dealStartTime = deals[i].dealDate.getTime();
+                                        var dealEndTime = deals[i].endDate.getTime();
+                                        var intervals = Math.floor((dealEndTime - dealStartTime) / (1000 * 60 * 15));         //Total number of 15 mins intervals btw the start and end time of the deal
+                                        userBookedDealsStartTimeArray.push(new Date(dealStartTime));
+                                        for (var j = 0; j < intervals; j++) {
+                                            var dealIntervalTimeStamps = 0;
+                                            dealIntervalTimeStamps = dealStartTime + 1000 * 60 * 15 * (j + 1);
+                                            userBookedDealsStartTimeArray.push(new Date(dealIntervalTimeStamps));
+                                        }
+                                        console.log(userBookedDealsStartTimeArray);
+                                    }
+
+                                    if(deals[0].dealDate==deals[0].dealDate.getTime()){
+                                     console.log("Inside the dates testing if block");
+                                    }
+                                Deal.find({subjectName: { $in :user.Specialization} , isActive: true, dealDate:{ $nin:userBookedDealsStartTimeArray}},{adminName:1}, function (err, docs) {
+                                    if(err){
+                                        res.json({
+                                            message : 'Couldn\'t find Any Deal',
+                                            error : err
+                                        });
+                                    }else {
+                                        res.json({
+                                            responses : docs
+                                        })
+                                    }
+                                });
+
+                            }
+                        })
+
+                    }
+
+                });
+            }
+        });
+    } else {
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided.'
+        });
+    }
+};

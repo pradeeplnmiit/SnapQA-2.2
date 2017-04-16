@@ -31,11 +31,11 @@ var UserSchema= new mongoose.Schema({
     Points : {type: Number , default:0},
     rating : {type:Number, default:0},
     Specialization : [String],
-    bankDetails : [{
+    bankDetails : {
         accNo : String,
         iFSC : String,
         panNumber : String
-    }],
+    },
 
     createdAt : {type: Date , default: new Date()},
     lastLogin : {type : Date, default: new Date()},

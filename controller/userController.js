@@ -6,6 +6,7 @@ var User = require('../models/user');
 var jwt = require('../node_modules/jsonwebtoken');
 var config=require('../config');
 var mongoose = require('mongoose');
+var nodemailer = require('nodemailer');
 
 exports.postUser= function(req,res){
     var user = new User();
@@ -296,6 +297,11 @@ exports.editPaymentDetails = function (req,res) {
                             message:'Unsuccessful',
                             error : err
                         });
+                    else if(!user){
+                        res.json({
+                            message : 'No User Found'
+                        })
+                    }
                     else
                         res.json({
                             message:'Successful !! Bank Details Added !!'
@@ -312,4 +318,100 @@ exports.editPaymentDetails = function (req,res) {
         });
     }
 
+}
+
+
+exports.welcomeEmail = function (req,res) {
+    var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'rsnapqa@gmail.com', // Your email id
+            pass: 'Pannu#paroo123' // Your password
+        }
+    });
+
+    var mailOptions = {
+        from: 'SnapQA Admin<rsnapqa@gmail.com>', // sender address
+        to: 'hsnapqa@gmail.com', // list of receivers
+        subject: 'Welcome to SnapQA', // Subject line
+        //text: 'Hi User, \n\n Thank you for Registration with SnapQA !!' // plaintext body
+        html: '<b><p>Hi SnapQAUser,</p></br><p>Thank you for your registration to SnapQA.</p></br></br><p>Regards,</p><p>SnapQA Team</p></b>', // You can choose to send an HTML body instead
+
+        attachments: [
+
+            // // String attachment
+            // {
+            //     filename: 'notes.txt',
+            //     content: 'Some notes about this e-mail',
+            //     contentType: 'text/plain' // optional, would be detected from the filename
+            // },
+            // // // Binary Buffer attachment
+            //  {
+            //     filename: 'image.png',
+            //     content: new Buffer('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD/' +
+            //         '//+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4U' +
+            //         'g9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC', 'base64'),
+            //
+            //     cid: 'note@example.com' // should be as unique as possible
+            // },
+            // File Stream attachment
+            {
+                filename: 'image.png',
+                path: __dirname + '/assets/image.png',
+                cid: 'nyan@example.com' // should be as unique as possible
+            }
+        ]
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            console.log(error);
+            res.json({yo: 'error'});
+        }else{
+            console.log('Message sent: ' + info.response);
+            res.json({yo: info.response});
+        };
+    });
+
+}
+
+exports.forgotPassword = function (req,res) {
+    var phone = req.body.phone || "";
+    var email = req.body.email || "";
+
+    console.log(phone);
+    console.log(email);
+    if(phone || email)
+    {
+        User.findOne({$or : [{Phone: phone}, {Email: email}]},function (err,user) {
+
+            if(err) {
+                res.json({
+                    message: 'UnSuccessful',
+                    error: err
+                });
+            }
+            else if(!user){
+                    res.json({
+                        message:'No user with given information'
+                    });
+                }
+            else if(phone){
+                res.json({
+                    message : 'User Found by Phone Number',
+                    user : user.Phone
+                });
+            }else if(email){
+                res.json({
+                    message : 'User Found by Email',
+                    user : user.Email
+                });
+            }
+        });
+    }
+    else{
+        res.json({
+           message : 'No Phone or email in the body'
+        });
+    }
 }
