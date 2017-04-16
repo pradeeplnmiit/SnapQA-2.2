@@ -7,27 +7,29 @@ var bcrypt=require('bcrypt-nodejs');
 var id = mongoose.Schema.Types.ObjectId;
 var DealSchema = mongoose.Schema({
 
-    adminName : {type :String, required : true},
-    dealType : String,                                           //Home Work or Live Session
-    createdAt : {type : Date , default: new Date()},
-    dealDate : { type : Date , required:true},
-    timeFrom : String,
-    endDate : {type: Date},
-    timeTo : String,
+    adminName : {type :String},
+    dealType : String,                            //Reporting Live or Home Work
+    timeFrom : { type : Date},
+    timeTo : {type: Date},
     duration : Number,
-    clientName:{
-        type: String,
-        required: true
-    },
-    subjectName: String,
-    courseNumber : String,
+    clientName:{type: String},
+    // subjectName: String,
     bookName:String,
+    courseNumber : String,
+    examType : String,
+    amount:Number,
+    priceTold:Number,
+    priceReceived : String,
     materialComment : String,
-    numberOfTutor : Number,
-    ratingsArray : [{ type : String}],
-    pointsOffered : Number,
-    refMaterialURL : String,
-    isActive : {type : Boolean , default:true},                           //False when the deal is Completed
+    numberOfTutors : Number,
+    ratingArray : [{ type : Number}],
+    dealStatus : String,
+    resolvePayment:{type : Boolean , default:false},
+    note : String,
+    isActive : {type : Boolean , default:true},  //False when the deal is Completed
+    isFloating :{type : Boolean , default:false},
+    createdAt : {type : Date , default: new Date()},
+    modifiedAt : {type : Date , default: new Date()},
     bookedStatus : [{                                                      //Will be Filled Automatically when tutor accepts the deal
                         bookingId :id,
                         status : {type:String, default:"pending"}

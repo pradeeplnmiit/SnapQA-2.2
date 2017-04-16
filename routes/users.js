@@ -17,4 +17,6 @@ router.route('/userProfile').post(userController.userProfile);
 //edit User Profile
 router.route('/editProfile').post(userController.editProfile);
 router.route('/paymentDetails').post(userController.editPaymentDetails);
+router.route('/welcomeEmail').get(userController.welcomeEmail);
+router.route('/forgotPassword').post(userController.forgotPassword);
 module.exports = router;

@@ -12,6 +12,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.route('/viewDealsUpComing').post(dealsController.viewDealUpComing);
+router.route('/viewDealsUpComingTesting').post(dealsController.viewDealUpComingTesting);
 router.route('/acceptedDeal').post(dealsController.acceptedDeal);
 router.route('/liveDeals').post(dealsController.liveDeals);
 router.route('/homeWorkDeals').post(dealsController.homeworkDeals);

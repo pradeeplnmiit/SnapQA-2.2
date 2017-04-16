@@ -11,18 +11,29 @@ exports.addNewDeal = function (req,res) {
 //Hello Random Comment
     var deal = new Deal();
     deal.adminName = req.body.adminName;
-    deal.dealType = req.body.type;
-    deal.dealDate = req.body.dealDate;
-    deal.timeFrom = req.body.timeFrom;
-    deal.endDate = req.body.endDate;
-    deal.timeTo = req.body.timeTo;
-    deal.clientName = req.body.clientName;
-    deal.subjectName = req.body.subjectName;
-    deal.pointsOffered = req.body.pointsOffered;
-    deal.courseNumber = req.body.courseNumber;
+    deal.dealType = req.body.dealType;
+    if(deal.dealType == "Reporting Live"){
+        deal.timeFrom = new Date(req.body.timeFrom);
+        console.log(deal.timeFrom.getHours());
+    }
+    deal.timeTo = new Date(req.body.timeTo);
     deal.duration = req.body.duration;
+    deal.clientName = req.body.clientName;
+    // deal.subjectName = req.body.subjectName;
     deal.bookName = req.body.bookName;
+    deal.amount = req.body.amount;
+    if(deal.dealType=="Home Work"){
+        deal.priceTold = req.body.priceTold;
+    }
+    deal.priceReceived = req.body.priceReceived;
+    deal.courseNumber = req.body.courseNumber;
+    deal.examType = req.body.examtype;
+    deal.materialComment = req.body.materialComment;
     deal.numberOfTutor = req.body.numberOfTutor;
+    deal.ratingArray = req.body.ratingArray;
+    deal.resolvePayment = req.body.resolvePayment;
+    deal.note = req.body.note;
+    deal.dealStatus = req.body.dealStatus;
     deal.save(function (err) {
         if(err)
             res.json({
@@ -58,6 +69,7 @@ exports.viewDeal=function(req,res){
 //Editing the Deal by the Admin
 exports.editDeal = function (req,res) {
     var dealId = req.body.dealId;
+    console.log(dealId);
     if(dealId){
         Deal.findOne({_id:dealId},function (err,deal) {
             if(err){
@@ -71,8 +83,35 @@ exports.editDeal = function (req,res) {
                     error : err
                 });
             }else{
-                deal.bookedStatus.bookingId = req.body.bookingId;
-                deal.bookedStatus.status = req.body.status;
+                deal.adminName = req.body.adminName || deal.adminName;
+                deal.dealType = req.body.dealType || deal.dealType;
+                if(deal.dealType == "Reporting Live" && req.body.timeFrom != undefined){
+                    deal.timeFrom = new Date(req.body.timeFrom) ;
+                    console.log("Inside TimeFrom If Block");
+                    console.log(deal.timeFrom.getHours());
+                }
+                if(req.body.timeTo != undefined){
+                    deal.timeTo = new Date(req.body.timeTo);
+                    console.log("Inside if of Time to");
+                }
+                deal.duration = req.body.duration || deal.duration;
+                deal.clientName = req.body.clientName || deal.clientName;
+                // deal.subjectName = req.body.subjectName;
+                deal.bookName = req.body.bookName || deal.bookName;
+                deal.amount = req.body.amount || deal.amount;
+                if(deal.dealType=="Home Work"){
+                    deal.priceTold = req.body.priceTold || deal.priceTold;
+                }
+                deal.priceReceived = req.body.priceReceived || deal.priceReceived;
+                deal.courseNumber = req.body.courseNumber || deal.courseNumber;
+                deal.examType = req.body.examtype || deal.examType;
+                deal.materialComment = req.body.materialComment || deal.materialComment;
+                deal.numberOfTutor = req.body.numberOfTutor || deal.numberOfTutor;
+                deal.ratingArray = req.body.ratingArray || deal.ratingArray;
+                deal.resolvePayment = req.body.resolvePayment || deal.resolvePayment;
+                deal.note = req.body.note || deal.note;
+                deal.dealStatus = req.body.dealStatus || deal.dealStatus;
+                deal.modifiedAt = new Date();
                 deal.save(function (err) {
                     if(err)
                         res.json({
@@ -81,8 +120,7 @@ exports.editDeal = function (req,res) {
                         });
                     else
                         res.json({
-                            message:'Successful !! Deal Edited !!',
-                            error : err
+                            message:'Successful !! Deal Edited !!'
                         });
                 });
             }
