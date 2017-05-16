@@ -25,27 +25,39 @@ exports.viewDealUpComing = function (req, res) {
                     userId = decoded._doc._id;
                 }
                 console.log(userId);
-                User.findOne({_id : userId},{Specialization:1},function (err,user) {
-                    if(err){
+                User.findOne({_id : userId},{Specialization:1,isPhoneVerified:1},function (err,user) {
+                    if (err) {
                         res.send({
-                            success : false,
-                            message : 'Couldn\'t find the User'
+                            success: false,
+                            message: 'Couldn\'t find the User'
                         })
-                    }else{
-                        console.log(user.Specialization);
-                        Deal.find({subjectName: { $in :user.Specialization} , isActive: true}, function (err, docs) {
-                            if(err){
+                    } else {
+                        if (user.isPhoneVerified) {
+                            if (user.Specialization.length !=0) {
+                                console.log(user.Specialization);
+                                 Deal.find({subjectName: {$in: user.Specialization}, isActive: true}, function (err, docs) {
+                                if (err) {
+                                    res.json({
+                                        message: 'Couldn\'t find Any Deal',
+                                        error: err
+                                    });
+                                } else {
+                                    res.json({
+                                        responses: docs
+                                    })
+                                }
+                            });
+                        }else{
                                 res.json({
-                                    message : 'Couldn\'t find Any Deal',
-                                    error : err
-                                });
-                            }else {
-                                res.json({
-                                    responses : docs
+                                    message:"subjectsNotAdded"
                                 })
                             }
-                        });
-                    }
+                    }else{
+                            res.json({
+                                message:"phoneNotVerified"
+                            })
+                        }
+                }
 
                 });
             }
@@ -282,3 +294,10 @@ exports.viewDealUpComingTesting = function (req, res) {
         });
     }
 };
+
+/*Status for View up Coming deals
+
+1. PhoneNotVerified
+2. SubjectsNotAdded
+3.
+ */

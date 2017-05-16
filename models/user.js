@@ -36,7 +36,7 @@ var UserSchema= new mongoose.Schema({
         iFSC : String,
         panNumber : String
     },
-
+    isPhoneVerified : {type : Boolean , default:false},
     createdAt : {type: Date , default: new Date()},
     lastLogin : {type : Date, default: new Date()},
     modifiedAt : {type : Date, default: new Date()},
