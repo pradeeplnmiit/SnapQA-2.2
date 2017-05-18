@@ -19,4 +19,6 @@ router.route('/editProfile').post(userController.editProfile);
 router.route('/paymentDetails').post(userController.editPaymentDetails);
 router.route('/welcomeEmail').get(userController.welcomeEmail);
 router.route('/forgotPassword').post(userController.forgotPassword);
+router.route('/resetPassword').post(userController.resetPassword);
+router.route('/otpVerified').post(userController.otpVerified);
 module.exports = router;

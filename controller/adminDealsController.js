@@ -154,7 +154,6 @@ exports.overAllList = function (req,res) {
         'Design of Machine',
         'Manufacturing Process',
         'Material Science',
-        'Control System',
         'Measurements',
         'Composite Material',
         'Instrumentation',
@@ -163,7 +162,6 @@ exports.overAllList = function (req,res) {
         'Autocad',
         'Ansys',
         'Solid Works',
-        'Matlab',
         'Robotics',
         'Statics',
         'Dynamics',
@@ -182,7 +180,6 @@ exports.overAllList = function (req,res) {
         'Measurement',
         'Control System',
         'Embedded System',
-        'Electrostatics',
         'Power System',
         'Electrical Engineering',
         'Robotics',
@@ -198,7 +195,6 @@ exports.overAllList = function (req,res) {
         'Numerical Methods',
         'Probability',
         'Statistics',
-        'VBA',
         'Complex Maths',
         'Mechanics',
         'Physics',
@@ -236,7 +232,7 @@ exports.overAllList = function (req,res) {
         'Geophysics',
         'Operations Research',
         'Engineering Cost Analysis' ];
-    var admins = ["Ankit","Anoop","Hardik","Parveen","Vishal"];
+    var admins = ["Ankit","Anoop","Manish","Parveen","Vishal"];
     var examType = {"ReportingLive":[
                                         "Exam","Final Exam","Quiz","PopUp Quiz"
                                     ],

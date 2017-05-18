@@ -332,7 +332,7 @@ exports.welcomeEmail = function (req,res) {
 
     var mailOptions = {
         from: 'SnapQA Admin<rsnapqa@gmail.com>', // sender address
-        to: 'hsnapqa@gmail.com', // list of receivers
+        to: 'rsnapqa@gmail.com', // list of receivers
         subject: 'Welcome to SnapQA', // Subject line
         //text: 'Hi User, \n\n Thank you for Registration with SnapQA !!' // plaintext body
         html: '<b><p>Hi SnapQAUser,</p></br><p>Thank you for your registration to SnapQA.</p></br></br><p>Regards,</p><p>SnapQA Team</p></b>', // You can choose to send an HTML body instead
@@ -414,4 +414,68 @@ exports.forgotPassword = function (req,res) {
            message : 'No Phone or email in the body'
         });
     }
+}
+exports.resetPassword = function (req,res) {
+    var phone = req.body.phone || "";
+    var password = req.body.password ;
+    console.log(phone);
+    if(phone)
+    {
+
+        User.findOne({Phone:phone},function (err,user) {
+
+            if(err) {
+                res.json({
+                    message: 'UnSuccessful',
+                    error: err
+                });
+            }
+            else {
+
+                user.Password = password;
+                user.save(function (err) {
+                    if(err){
+                        res.json({
+                            message: 'UnSuccessful',
+                            error: err
+                        });
+                    }else{
+                        res.json({
+                            message : 'PasswordResetSuccessfully',
+                            user : user.Password
+                        });
+                    }
+                });
+
+            }
+        });
+    }
+    else{
+        res.json({
+            message : 'No Phone in the body'
+        });
+    }
+}
+
+exports.otpVerified = function (req, res) {
+
+    var phone = req.body.phone;
+
+    User.findOneAndUpdate({Phone :phone},{"$set":{"isPhoneVerified":true}},function (err,user) {
+        if(err)
+            res.json({
+                message:'Unsuccessful',
+                error : err
+            });
+        else if(!user){
+            res.json({
+                message : 'No User Found'
+            })
+        }
+        else
+            res.json({
+                message:'Successful'
+            });
+    })
+
 }
