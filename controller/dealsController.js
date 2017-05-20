@@ -89,31 +89,40 @@ exports.acceptedDeal = function (req,res) {        //Required : Token and Deal i
                 console.log(user_id);
                 Deal.findOne({_id : req.body._id},function (err,deal) {
                     if(err) {
-                        res.send({
-                            status: false,
-                            message: 'Couldn\'t find the Deal'
+                        res.json({
+                                message: "Couldn't find the deal"
                         })
-                    }
-                        else{
-                                console.log(deal.isActive);
-                                deal.isActive = false;
-                                console.log(deal.isActive);
-                                var randId = new mongoose.Types.ObjectId();
-                                bookedStatusdata = {
-                                    "bookingId":user_id,
-                                    "status":"booked"
-                                }
-                                Deal.update({"_id":deal._id},{ "$push": { "bookedStatus": bookedStatusdata },"$set":{"isActive":false}},function(err) {
-                                    if (err) {
-                                        res.json({
-                                            message: 'Unsuccessful',
-                                            error: err
-                                        });
-                                    }
-                                    else {
-                                        res.json({
-                                            success: true,
-                                            message: 'Successful !! Deal Booked !!'
+                    }else{
+
+                                User.findOne({"_id":user_id},function (err,user) {
+                                    if(err){
+                                            res.json({
+                                                message:"Error in finding user by id"
+                                            })
+                                    }else{
+                                        console.log(deal.isActive);
+                                        deal.isActive = false;
+                                        console.log(deal.isActive);
+                                        var randId = new mongoose.Types.ObjectId();
+                                        bookedStatusdata = {
+                                            "userName":user.Name,
+                                            "rating" : user.rating,
+                                            "bookingId":user_id,
+                                            "status":"booked"
+                                        }
+                                        Deal.update({"_id":deal._id},{ "$push": { "contributor": bookedStatusdata },"$set":{"isActive":false}},function(err) {
+                                            if (err) {
+                                                res.json({
+                                                    message: 'Unsuccessful',
+                                                    error: err
+                                                });
+                                            }
+                                            else {
+                                                res.json({
+                                                    success: true,
+                                                    message: 'Successful !! Deal Booked !!'
+                                                });
+                                            }
                                         });
                                     }
                                 });

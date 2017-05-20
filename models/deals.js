@@ -23,16 +23,18 @@ var DealSchema = mongoose.Schema({
     materialComment : String,
     numberOfTutors : Number,
     ratingArray : [{ type : Number}],
-    dealStatus : String,
+    statusCode : Number,
+    statusMsg: String,
     resolvePayment:{type : Boolean , default:false},
     note : String,
     isActive : {type : Boolean , default:true},  //False when the deal is Completed
     isFloating :{type : Boolean , default:false},
     createdAt : {type : Date , default: new Date()},
     modifiedAt : {type : Date , default: new Date()},
-    bookedStatus : [{                                                      //Will be Filled Automatically when tutor accepts the deal
+    contributor : [{                                                      //Will be Filled Automatically when tutor accepts the deal
                         bookingId :id,
-                        status : {type:String, default:"pending"}
+                        userName : String,
+                        rating : Number
     }],
     feedback : [{
                     rating:Number,

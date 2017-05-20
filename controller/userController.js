@@ -248,6 +248,7 @@ exports.editProfile = function (req,res) {
                             user.Phone=req.body.Phone || user.Phone;
                             // user.Password=req.body.Password;
                             user.Email = req.body.Email || user.Email;
+                            user.rating = req.body.rating || user.rating;
                             user.modifiedAt = new Date();
                             user.Specialization = req.body.subjects || user.Specialization;
                             user.save(function (err) {

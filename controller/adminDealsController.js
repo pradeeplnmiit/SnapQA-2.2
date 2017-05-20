@@ -17,6 +17,8 @@ exports.addNewDeal = function (req,res) {
         console.log(deal.timeFrom.getHours());
     }
     deal.timeTo = new Date(req.body.timeTo);
+    deal.statusCode = req.body.statusCode;
+    deal.statusMsg = req.body.statusMsg;
     deal.duration = req.body.duration;
     deal.clientName = req.body.clientName;
     deal.subjectName = req.body.subjectName;
@@ -27,13 +29,12 @@ exports.addNewDeal = function (req,res) {
     }
     deal.priceReceived = req.body.priceReceived;
     deal.courseNumber = req.body.courseNumber;
-    deal.examType = req.body.examtype;
+    deal.examType = req.body.examType;                                 //Changed to capital T from t
     deal.materialComment = req.body.materialComment;
     deal.numberOfTutor = req.body.numberOfTutor;
     deal.ratingArray = req.body.ratingArray;
     deal.resolvePayment = req.body.resolvePayment;
     deal.note = req.body.note;
-    deal.dealStatus = req.body.dealStatus;
     deal.save(function (err) {
         if(err)
             res.json({
@@ -68,7 +69,7 @@ exports.viewDeal=function(req,res){
 
 //Editing the Deal by the Admin
 exports.editDeal = function (req,res) {
-    var dealId = req.body.dealId;
+    var dealId = req.body._id;
     console.log(dealId);
     if(dealId){
         Deal.findOne({_id:dealId},function (err,deal) {
@@ -83,34 +84,35 @@ exports.editDeal = function (req,res) {
                     error : err
                 });
             }else{
-                deal.adminName = req.body.adminName || deal.adminName;
-                deal.dealType = req.body.dealType || deal.dealType;
-                if(deal.dealType == "Reporting Live" && req.body.timeFrom != undefined){
-                    deal.timeFrom = new Date(req.body.timeFrom) ;
+                deal.adminName = req.body.data.adminName || deal.adminName;
+                deal.dealType = req.body.data.dealType || deal.dealType;
+                if(deal.dealType == "Reporting Live" && req.body.data.timeFrom != undefined){
+                    deal.timeFrom = new Date(req.body.data.timeFrom) ;
                     console.log("Inside TimeFrom If Block");
                     console.log(deal.timeFrom.getHours());
                 }
-                if(req.body.timeTo != undefined){
-                    deal.timeTo = new Date(req.body.timeTo);
+                if(req.body.data.timeTo != undefined){
+                    deal.timeTo = new Date(req.body.data.timeTo);
                     console.log("Inside if of Time to");
                 }
-                deal.duration = req.body.duration || deal.duration;
-                deal.clientName = req.body.clientName || deal.clientName;
-                // deal.subjectName = req.body.subjectName;
-                deal.bookName = req.body.bookName || deal.bookName;
-                deal.amount = req.body.amount || deal.amount;
-                if(deal.dealType=="Home Work"){
-                    deal.priceTold = req.body.priceTold || deal.priceTold;
-                }
-                deal.priceReceived = req.body.priceReceived || deal.priceReceived;
-                deal.courseNumber = req.body.courseNumber || deal.courseNumber;
-                deal.examType = req.body.examtype || deal.examType;
-                deal.materialComment = req.body.materialComment || deal.materialComment;
-                deal.numberOfTutor = req.body.numberOfTutor || deal.numberOfTutor;
-                deal.ratingArray = req.body.ratingArray || deal.ratingArray;
-                deal.resolvePayment = req.body.resolvePayment || deal.resolvePayment;
-                deal.note = req.body.note || deal.note;
-                deal.dealStatus = req.body.dealStatus || deal.dealStatus;
+                deal.duration = req.body.data.duration || deal.duration;
+                deal.clientName = req.body.data.clientName || deal.clientName;
+                 deal.subjectName = req.body.data.subjectName;
+                deal.bookName = req.body.data.bookName || deal.bookName;
+                deal.amount = req.body.data.amount || deal.amount;
+                    deal.priceTold = req.body.data.priceTold || deal.priceTold;
+                deal.statusCode = req.body.data.statusCode || deal.statusCode;
+                deal.statusMsg = req.body.data.statusMsg || deal.statusMsg;
+                deal.isFloating = req.body.data.isFloating || deal.isFloating;
+                deal.priceReceived = req.body.data.priceReceived || deal.priceReceived;
+                deal.courseNumber = req.body.data.courseNumber || deal.courseNumber;
+                deal.examType = req.body.data.examType || deal.examType;                         //Changed to capital T from t
+                deal.materialComment = req.body.data.materialComment || deal.materialComment;
+                deal.numberOfTutor = req.body.data.numberOfTutor || deal.numberOfTutor;
+                deal.ratingArray = req.body.data.ratingArray || deal.ratingArray;
+                deal.resolvePayment = req.body.data.resolvePayment || deal.resolvePayment;
+                deal.isActive = req.body.data.isActive || deal.isActive;
+                deal.note = req.body.data.note || deal.note;
                 deal.modifiedAt = new Date();
                 deal.save(function (err) {
                     if(err)
@@ -126,13 +128,13 @@ exports.editDeal = function (req,res) {
             }
 
         })
-    }else{
-        return res.status(403).send({
-            success: false,
-            message: 'No Deal Id is provided provided.'
-        });
-    }
-
+    }else
+{
+    return res.status(403).send({
+        success: false,
+        message: 'No Deal Id is provided provided.'
+    });
+}
 }
 
 exports.overAllList = function (req,res) {
