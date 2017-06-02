@@ -12,7 +12,7 @@ exports.addNewDeal = function (req,res) {
     var deal = new Deal();
     deal.adminName = req.body.adminName;
     deal.dealType = req.body.dealType;
-    if(deal.dealType == "Reporting Live"){
+    if(deal.dealType == "Live Session"){
         deal.timeFrom = new Date(req.body.timeFrom);
         console.log(deal.timeFrom.getHours());
     }
@@ -24,7 +24,7 @@ exports.addNewDeal = function (req,res) {
     deal.subjectName = req.body.subjectName;
     deal.bookName = req.body.bookName;
     deal.amount = req.body.amount;
-    if(deal.dealType=="Home Work"){
+    if(deal.dealType=="Deadline Session"){
         deal.priceTold = req.body.priceTold;
     }
     deal.priceReceived = req.body.priceReceived;
@@ -135,6 +135,50 @@ exports.editDeal = function (req,res) {
         message: 'No Deal Id is provided provided.'
     });
 }
+}
+
+exports.paymentNotResolvedDeal=function(req,res){
+    Deal.find({resolvePayment:false},function (err,deal) {
+        if(err) {
+            res.json({
+                error: err
+            });
+        }
+        else{
+            res.send(deal);
+        }
+
+    })
+
+}
+
+exports.dateSpecificDeals=function(req,res){
+    var queriedDate = new Date(req.body.date);
+    console.log("Queried Date :"+queriedDate);
+    var queryStartDate = new Date(queriedDate.getTime() + 6*60*60*1000 + 30*60*1000);
+    var queryEndDate = new Date(queryStartDate.getTime() + 24*60*60*1000);
+    console.log("Start Date :"+queryStartDate);
+    console.log("End Date : "+queryEndDate);
+    Deal.find({"timeFrom":{$gte:queryStartDate,$lte:queryEndDate}},function (err,deal) {
+        if(err) {
+            res.json({
+                error: err
+            });
+        }
+        else{
+            // var dateNow = new Date();
+            // var twelvehrsTimeStampValue = 12*60*60*1000;
+            // var dateStartOfDate = new Date(2017,5,1);
+            // var test = dateStartOfDate.getTime() + twelvehrsTimeStampValue;
+            // var nextDayDate = test + 24*60*60*1000;
+            // console.log("Testing Date : "+(new Date(test)));
+            // console.log("Next Day Date : "+new Date(nextDayDate));
+            // console.log("Testing Deal Date : "+(new Date(deal[0].timeFrom)));
+            res.send(deal);
+        }
+
+    })
+
 }
 
 exports.overAllList = function (req,res) {

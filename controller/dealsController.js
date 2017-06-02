@@ -159,7 +159,7 @@ exports.liveDeals = function (req,res) {
                     user_id = decoded._doc._id;
                 }
                 console.log(user_id);
-                Deal.find({dealType:"Reporting Live",'bookedStatus.bookingId': user_id},function (err,deal) {
+                Deal.find({dealType:"Live Session",'contributor.bookingId': user_id},function (err,deal) {
                     if(err){
                         res.send({
                             status: false,
@@ -201,7 +201,7 @@ exports.homeworkDeals = function (req,res) {
                     user_id = decoded._doc._id;
                 }
                 console.log(user_id);
-                Deal.find({dealType:"Home Work",'bookedStatus': {$elemMatch: {bookingId: user_id}}},function (err,deal) {
+                Deal.find({dealType:"Deadline Session",'contributor': {$elemMatch: {bookingId: user_id}}},function (err,deal) {
                     if(err){
                         res.send({
                             status: false,
