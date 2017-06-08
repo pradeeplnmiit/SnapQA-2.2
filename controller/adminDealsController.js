@@ -5,7 +5,7 @@ var Deal = require('../models/deals');
 var User = require('../models/user');
 var jwt = require('../node_modules/jsonwebtoken');
 var config=require('../config');
-
+var UserHistory = require('../models/userHistory');
 //Adding a new Deal by the admin
 exports.addNewDeal = function (req,res) {
 //Hello Random Comment
@@ -100,7 +100,7 @@ exports.editDeal = function (req,res) {
                  deal.subjectName = req.body.data.subjectName;
                 deal.bookName = req.body.data.bookName || deal.bookName;
                 deal.amount = req.body.data.amount || deal.amount;
-                    deal.priceTold = req.body.data.priceTold || deal.priceTold;
+                deal.priceTold = req.body.data.priceTold || deal.priceTold;
                 deal.statusCode = req.body.data.statusCode || deal.statusCode;
                 deal.statusMsg = req.body.data.statusMsg || deal.statusMsg;
                 deal.isFloating = req.body.data.isFloating || deal.isFloating;
@@ -114,19 +114,84 @@ exports.editDeal = function (req,res) {
                 deal.isActive = req.body.data.isActive || deal.isActive;
                 deal.note = req.body.data.note || deal.note;
                 deal.modifiedAt = new Date();
-                deal.save(function (err) {
+                if(deal.statusMsg=="Got Answers,Not Payment"){
+                    var userId = req.body.data.userId;
+                    var userHist = new UserHistory();
+                    userHist.userId = userId;
+                    userHist.dealsId = dealId;
+                    userHist.status = "Submitted";
+                    userHist.save(function (err) {
+                        if(err)
+                            res.send({
+                                message:'Unsuccessful in Saving details in user History',
+                                error : err
+                            });
+                        else {
+                            deal.save(function (err) {
+                                if(err)
+                                    res.json({
+                                        message:'Unsuccessful',
+                                        error : err
+                                    });
+                                else{
+                                    res.json({
+                                        message:"Successful Edit the Deal and Added deals History for the user"});
+                                }
+
+                            });
+                        }
+                    })
+                }else if(deal.statusMsg=="Payment Done Finally"){
+                    var userId = req.body.data.userId;
+                    UserHistory.findOne({userId:userId,dealsId:dealId},function (err,userHistory) {
+                        if(err){
+                                    res.send({
+                                        message:"Error in Finding the corresponding deal and user"
+                                    })
+                        }else{
+                                var id = userHistory._id;
+                                UserHistory.update({_id:id},{$set:{"status":"Earned Points 350"}},function (err,userHistoryUpdated) {
+                                    if(err){
+                                        res.send({
+                                            message:"Couldn't update the deals History of the user"
+                                        })
+                                    }else{
+                                        deal.save(function (err) {
+                                            if(err)
+                                                res.json({
+                                                    message:'Unsuccessful',
+                                                    error : err
+                                                });
+                                            else{
+                                                res.json({
+                                                    message:"Successful Edit the Deal and Updated deals History for the user"});
+                                            }
+
+                                        });
+                                    }
+                                });
+                        }
+
+                    });
+
+
+                }else{
+                    deal.save(function (err) {
                     if(err)
                         res.json({
                             message:'Unsuccessful',
                             error : err
                         });
-                    else
+                    else{
                         res.json({
-                            message:'Successful !! Deal Edited !!'
+                            message:"Successfully Edited the Deal"
                         });
-                });
-            }
 
+                    }
+
+                });}
+
+            }
         })
     }else
 {
