@@ -21,4 +21,6 @@ router.route('/welcomeEmail').get(userController.welcomeEmail);
 router.route('/forgotPassword').post(userController.forgotPassword);
 router.route('/resetPassword').post(userController.resetPassword);
 router.route('/otpVerified').post(userController.otpVerified);
+router.route('/dealsHistory').post(userController.dealsHistory);
+
 module.exports = router;

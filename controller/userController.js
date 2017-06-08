@@ -3,6 +3,7 @@
  */
 
 var User = require('../models/user');
+var UserHistory = require('../models/userHistory');
 var jwt = require('../node_modules/jsonwebtoken');
 var config=require('../config');
 var mongoose = require('mongoose');
@@ -276,6 +277,44 @@ exports.editProfile = function (req,res) {
 
 }
 
+exports.dealsHistory = function (req,res) {
+    var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.param('Token');
+    if (token) {
+        jwt.verify(token, config.secretKey, function (err, decoded) {
+            if (err) {
+                return res.json({success: false, message: 'Failed to authenticate token.', error: err});
+            } else {
+                var user_id;
+                var dealsFromDate = new Date(req.body.date);
+                if (decoded._id) {
+                    console.log("Inside decoded._id if block")
+                    user_id = decoded._id;
+                } else {
+                    console.log("Inside else block");
+                    user_id = decoded._doc._id;
+                }
+                console.log(user_id);
+                UserHistory.find({userId:user_id,createdAt:{$gte:dealsFromDate}},function (err,userHistory) {
+                    if(err)
+                        res.json({
+                            message:'Unsuccessful',
+                            error : err
+                        });
+                    else if(!userHistory){
+                        res.json({
+                            message : 'No Deals History Found'
+                        })
+                    }
+                    else
+                        res.json({
+                            response : userHistory
+                        });
+                })
+            }
+        });
+    }
+}
+
 exports.editPaymentDetails = function (req,res) {
     var token = req.body.token || req.query.token || req.headers['x-access-token'] || req.param('Token');
     if(token){
@@ -326,8 +365,8 @@ exports.welcomeEmail = function (req,res) {
     var transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-            user: 'rsnapqa@gmail.com', // Your email id
-            pass: 'Pannu#paroo123' // Your password
+            user: '', // Your email id
+            pass: '' // Your password
         }
     });
 
